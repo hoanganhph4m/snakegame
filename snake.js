@@ -63,6 +63,11 @@ class Snake {
         this.body.unshift(newHead);
         this.body.pop();
     }
+    eatApple() {
+        let newHead = this.body[0];
+        this.body.unshift(newHead);
+
+    }
 }
 const snake = new Snake(0, 0);
 console.log(snake);
