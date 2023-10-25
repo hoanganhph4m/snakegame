@@ -8,27 +8,37 @@ class GamePlay {
     check
 
     constructor(width, height, color) {
-       
+
         this.canvas = document.getElementById("gameCanvas");
         this.canvasContext = this.canvas.getContext("2d");
         this.canvas.width = width;
         this.canvas.height = height;
         this.color = color;
-        this.unitSize = width / 10;
+        this.unitSize = width / 20;
 
-        this.snake = new Snake(0, 0, this.unitSize);
-    
+        this.snake = new Snake(0, 0, -1, 0, this.unitSize);
+        this.createApple();
     }
-    creatApple() {
+    createApple() {
         let numberOfSquares = this.canvas.width / this.unitSize;
 
         let squareLocationX = Math.floor(Math.random() * numberOfSquares);
         let squareLocationY = Math.floor(Math.random() * numberOfSquares);
         let x = squareLocationX * this.unitSize;
         let y = squareLocationY * this.unitSize;
-        
+        if (this.isOnSnake(x, y)) this.createApple();
+        else this.apple = new Apple(x, y, "red");
 
-        this.apple = new Apple(x, y, "red");
+    }
+
+    isOnSnake(x, y) {
+        for (let cell of this.snake.body) {
+            if (cell.x == x && cell.y == y) {
+                return true;
+            }
+
+        }
+        return false;
     }
 
     drawRect(x, y, width, height, color) {
@@ -54,27 +64,62 @@ class GamePlay {
             this.drawRect(cell.x, cell.y, this.unitSize, this.unitSize, "yellow")
         }
     }
-    
+
     isAppleEaten() {
         let snakeH = this.snake.body[0]
-        if(snakeH.x == this.apple.x && snakeH.y == this.apple.y ) {
+        if (snakeH.x == this.apple.x && snakeH.y == this.apple.y) {
             this.snake.eatApple();
+            this.createApple();
         }
     }
-    
+    checkHitBorder() {
+        let snakeHead = this.snake.body[0]
+        if (snakeHead.x >= this.canvas.width) {
+            snakeHead.x = 0;
+        }
+        else if (snakeHead.y >= this.canvas.width) {
+            snakeHead.y = 0;
+        }
+        else if (snakeHead.x < 0) {
+            snakeHead.x = this.canvas.width - this.unitSize;
+        }
+        else if (snakeHead.y < 0) {
+            snakeHead.y = this.canvas.width - this.unitSize;
+        }
+    }
+
+    isSnakeHitBody() {
+        let snakeHead = this.snake.body[0];
+        for (let x = 1; x < this.snake.body.length; x++) {
+            let cell = this.snake.body[x];
+            if (snakeHead.x == cell.x && snakeHead.y == cell.y) {
+                this.gameover();
+            }
+        }
+
+    }
+
+    gameover() {
+        alert("GAMEOVER!!!!!")
+    }
     update() {
-        this.creatApple();
-        this.snake.move;
-        this.isSnakeHitBody;
-        this.isAppleEaten;
+
+        this.snake.move();
+        this.isSnakeHitBody();
+        this.checkHitBorder();
+        this.isAppleEaten();
+        
 
     }
     draw() {
-        gameplay.drawBackGround();
-        gameplay.drawApple();
-        gameplay.drawSnake();
+        this.drawBackGround();
+        this.drawScore();
+        this.drawApple();
+        this.drawSnake();
+    }
+    drawScore() {
+        this.canvasContext.font = "20px Arial";
+        this.canvasContext.fillStyle = "#00FF42";
+        this.canvasContext.fillText("Score: " + (this.snake.body.length - 1), this.canvas.width - 120, 20);
     }
 }
-const gameplay = new GamePlay(400, 400, "black");
-gameplay.creatApple();
-gameplay.draw();

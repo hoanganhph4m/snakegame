@@ -4,6 +4,7 @@ class Cell {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        
     }
 }
 
@@ -14,7 +15,7 @@ class Snake {
     unitSize;
 
     constructor(x,y,directionX, directionY, unitSize) {
-       
+    
         const cell = new Cell(x, y);
         this.unitSize = unitSize;
         this.directionX = directionX;
@@ -64,16 +65,8 @@ class Snake {
         this.body.pop();
     }
     eatApple() {
-        let newHead = this.body[0];
-        this.body.unshift(newHead);
+        // let newHead = this.body[0];
+        this.body.unshift(this.body[0]);
 
     }
 }
-const snake = new Snake(0, 0);
-console.log(snake);
-snake.turnLeft();
-console.log(snake);
-snake.turnUp();
-console.log(snake);
-snake.move()
-console.log(snake);
